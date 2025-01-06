@@ -60,7 +60,8 @@ def parse_train_dataset_aug3(file_name, NUM_POINTS, DATA_DIR):
             stdv = np.random.randint(-2, 2)
             train_labels.append(float(words[1]) + stdv)
             train_class.append(float(words[2]))
-            #break
+            if(i==20):
+                break
         #break
     return (
         np.array(train_points),
@@ -603,7 +604,7 @@ def train(model, train_dataloader, test_dataloader, num_epochs=100):
         print(f'Validation Smooth L1 Loss is: {avg_loss}  RMSE: {avg_rmse}')
         # Save the model's state dictionary
         if(pavg_rmse > avg_rmse and pavg_loss > avg_loss):
-            model_name = 'PointNet_plus2_'+str(epoch)+'_multi_colorshape.pth'
+            model_name = 'PointNet_plus2_'+str(epoch)+'_multi_colorshape_V2.pth'
             print(model_name)
             torch.save(model.state_dict(), model_name)
             pavg_loss = avg_loss
@@ -616,9 +617,9 @@ def prepareData( DATA_DIR, NUM_POINTS, device, BATCH_SIZE ):
     #visualizePCD( DATA_DIR, NUM_POINTS)
     
     #train_points, train_labels = parse_train_dataset_aug3(DATA_DIR + 'Train_list.txt', NUM_POINTS, DATA_DIR)
-    train_points, train_labels, train_class = parse_train_dataset_aug3('D:/Riseholm_Wheat_Biomass_Train_Multi.txt', NUM_POINTS, DATA_DIR)
+    train_points, train_labels, train_class = parse_train_dataset_aug3('D:/Riseholm_Wheat_Biomass_Train_Multi_v2.txt', NUM_POINTS, DATA_DIR)
     #test_points, test_labels = parse_test_dataset_aug2(DATA_DIR + 'Test_list.txt', NUM_POINTS, DATA_DIR)
-    test_points, test_labels, test_class = parse_test_dataset_aug2('D:/Riseholm_Wheat_Biomass_Test_Multi.txt', NUM_POINTS, DATA_DIR)    
+    test_points, test_labels, test_class = parse_test_dataset_aug2('D:/Riseholm_Wheat_Biomass_Test_Multi_v2.txt', NUM_POINTS, DATA_DIR)    
     # Convert numpy arrays to PyTorch tensors
     data_tensor = torch.tensor(train_points).to(device)
     labels_tensor = torch.tensor(train_labels).to(device)
@@ -707,7 +708,7 @@ def main():
 
         train_dataloader, test_dataloader = prepareData( DATA_DIR, NUM_POINTS, device, BATCH_SIZE )   
         model = get_model(NUM_CLASSES, normal_channel=True).to(device)
-        model = train(model, train_dataloader, test_dataloader, num_epochs=100)
+        model = train(model, train_dataloader, test_dataloader, num_epochs=200)
 
     elif (flag=='eval'):
         #DATA_DIR = ("D:/")
